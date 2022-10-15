@@ -7,10 +7,10 @@ public class App
     public static void main( String[] args )
     {
         // Test: 1
-        ElevatorManager em = new ElevatorManager((byte) 1, (short) 5, (short) 5);
-        em.pickUp((short) 3,true, (short)5);
+        ElevatorManager em = new ElevatorManager(2, 5,  5);
+        em.pickUp( 3,true, 5);
 
-        // Run loop
+        // Simulation loop
         Scanner s = new Scanner(System.in);
         String input;
         int i = 0;
@@ -20,7 +20,7 @@ public class App
             System.out.println("---"+(i++)+"---");
             System.out.println(em);
             input = s.next();
-            if (input.equals("+")){em.pickUp((short) -2,true, (short)1);}
+            if (input.equals("+")){em.pickUp(-2,true,1);}
             else if(input.equals("q")) break;
         }
         s.close();
