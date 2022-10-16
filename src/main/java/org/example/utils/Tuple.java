@@ -1,8 +1,8 @@
 package org.example.utils;
 
 public class Tuple<X, Y> {
-    X fst;
-    Y snd;
+    private final X fst;
+    private final Y snd;
 
     public Tuple(X fst, Y snd) {
         this.fst = fst;

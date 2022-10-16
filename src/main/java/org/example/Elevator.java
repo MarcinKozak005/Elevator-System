@@ -3,65 +3,64 @@ package org.example;
 import org.example.utils.Triplet;
 import org.example.utils.Tuple;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class Elevator {
-    int id;
-    int currentFloor;
-    int destinationFloor;
-    State state;
-    TreeSet<Integer> floorsOrder = new TreeSet<>();
+    private int id;
+    private int currentFloor;
+    private Action nextAction;
+    private TreeSet<Integer> queue = new TreeSet<>();
 
-    Elevator(int id, int currentFloor, int destinationFloor) {
-        update(id, currentFloor, destinationFloor);
-    }
-
-    Triplet<Integer, Integer, Integer> getStatus() {
-        return new Triplet<>(this.id, this.currentFloor, this.destinationFloor);
-    }
-
-    void update(int id, int currentFloor, int destinationFloor) {
+    Elevator(int id, int currentFloor) {
         this.id = id;
         this.currentFloor = currentFloor;
-        this.destinationFloor = destinationFloor;
-        calculateState();
+        this.nextAction = Action.IDLE;
     }
 
-    void calculateState() {
-        this.state = currentFloor == destinationFloor ? State.IDLE :
-                (currentFloor > destinationFloor ? State.DOWN : State.UP);
+    public Triplet<Integer, Integer, Integer> getStatus() {
+        return new Triplet<>(id, currentFloor, (queue.isEmpty() ? null : queue.first()));
     }
 
-    void bulkPickUp(Collection<Tuple<Integer, Integer>> collection) {
-        collection.forEach(t -> {
-            floorsOrder.add(t.getFst());
-            floorsOrder.add(t.getSnd());
-        });
+    private void calculateNextAction() {
+        if (queue.isEmpty()) nextAction = Action.IDLE;
+        else if (currentFloor == queue.first()) {
+            nextAction = Action.UNLOAD;
+            queue.pollFirst();
+        } else nextAction = (queue.first() > currentFloor) ? Action.UP : Action.DOWN;
     }
 
-    void pickUp(int fromFloor, int toFloor) {
-        floorsOrder.add(toFloor);
-        if (fromFloor == destinationFloor) return;
-        else if (state == State.DOWN && fromFloor <= currentFloor && fromFloor > destinationFloor ||
-                state == State.UP && fromFloor >= currentFloor && fromFloor < destinationFloor) {
-            // fromFloor is between currentFloor and destinationFloor
-            floorsOrder.add(destinationFloor);
-            destinationFloor = fromFloor;
-        } else floorsOrder.add(fromFloor);
+    private void configureQueueOrder(int fromFloor, int toFloor) {
+        queue = (fromFloor < toFloor) ? new TreeSet<>() : new TreeSet<>((o1, o2) -> Integer.compare(o2, o1));
     }
 
-    void step() {
-        if (state == State.UP || state == State.DOWN) {
-            currentFloor = (currentFloor < destinationFloor) ? (currentFloor + 1) : (currentFloor - 1);
-            if (currentFloor == destinationFloor) state = State.UNLOAD;
-        } else if (state == State.UNLOAD || state == State.IDLE) {
-            if (!floorsOrder.isEmpty()) {
-                destinationFloor = floorsOrder.first();
-                floorsOrder.remove(floorsOrder.first());
-                calculateState();
-            } else state = State.IDLE;
-        }
+    public void bulkPickUp(ArrayList<Tuple<Integer, Integer>> collection) {
+        collection.forEach(t -> pickUp(t.getFst(), t.getSnd()));
+    }
+
+    public void pickUp(int fromFloor, int toFloor) {
+        if (queue.isEmpty()) configureQueueOrder(fromFloor, toFloor);
+        queue.add(toFloor);
+        queue.add(fromFloor);
+        calculateNextAction();
+    }
+
+    public void step() {
+        if (nextAction == Action.UP) currentFloor++;
+        else if (nextAction == Action.DOWN) currentFloor--;
+        calculateNextAction();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getCurrentFloor() {
+        return currentFloor;
+    }
+
+    public Action getNextAction() {
+        return nextAction;
     }
 
     @Override
@@ -69,9 +68,9 @@ public class Elevator {
         return "Elevator{" +
                 "id=" + id +
                 ", currentFloor=" + currentFloor +
-                ", destinationFloor=" + destinationFloor +
-                ", state=" + state +
-                ", floorsOrder=" + floorsOrder +
+                ", destinationFloor=" + (queue.isEmpty() ? null : queue.first()) +
+                ", nexAction=" + nextAction +
+                ", floorsOrder=" + queue +
                 "}\n";
     }
 }
