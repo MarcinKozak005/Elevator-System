@@ -11,6 +11,7 @@ public class Elevator {
     private int currentFloor;
     private Action nextAction;
     private TreeSet<Integer> queue = new TreeSet<>();
+    private ArrayList<Integer> buffer = new ArrayList<>();
 
     Elevator(int id, int currentFloor) {
         this.id = id;
@@ -39,15 +40,31 @@ public class Elevator {
     }
 
     public void pickUp(int fromFloor, int toFloor) {
-        if (queue.isEmpty()) configureQueueOrder(fromFloor, toFloor);
-        queue.add(toFloor);
-        queue.add(fromFloor);
+        if (queue.isEmpty()) {
+            // change directions UP<->DOWN
+            configureQueueOrder(fromFloor, toFloor);
+            queue.add(toFloor);
+            queue.add(fromFloor);
+        } else if (fromFloor < toFloor && currentFloor > queue.first() ||
+                fromFloor > toFloor && currentFloor < queue.first()) {
+            // toFloor is in opposite direction to the elevator movement
+            queue.add(fromFloor);
+            buffer.add(toFloor);
+        } else {
+            // Standard case
+            queue.add(toFloor);
+            queue.add(fromFloor);
+        }
         calculateNextAction();
     }
 
     public void step() {
         if (nextAction == Action.UP) currentFloor++;
         else if (nextAction == Action.DOWN) currentFloor--;
+        else if (nextAction == Action.UNLOAD && queue.isEmpty()) {
+            queue.addAll(buffer);
+            buffer.clear();
+        }
         calculateNextAction();
     }
 
@@ -63,12 +80,16 @@ public class Elevator {
         return nextAction;
     }
 
+    public Integer getDestinationFloor() {
+        return queue.isEmpty() ? null : queue.first();
+    }
+
     @Override
     public String toString() {
         return "Elevator{" +
                 "id=" + id +
                 ", currentFloor=" + currentFloor +
-                ", destinationFloor=" + (queue.isEmpty() ? null : queue.first()) +
+                ", destinationFloor=" + getDestinationFloor() +
                 ", nexAction=" + nextAction +
                 ", floorsOrder=" + queue +
                 "}\n";

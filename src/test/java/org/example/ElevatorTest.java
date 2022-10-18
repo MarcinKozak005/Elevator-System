@@ -61,4 +61,22 @@ public class ElevatorTest {
         assertEquals(0, e.getCurrentFloor());
         assertEquals(Action.UNLOAD, e.getNextAction());
     }
+
+    @Test
+    public void callToGoUpButGoesDown() {
+        Elevator e = new Elevator(1, 0);
+        e.pickUp(1, 4);
+        e.pickUp(2, -3);
+        e.step(); // 1 UNLOAD
+        e.step(); // 1 UP
+        e.step(); // 2 UNLOAD
+        e.step(); // 2 UP
+        e.step(); // 3 UP
+        e.step(); // 4 UNLOAD
+        e.step(); // 4 DOWN
+        assertEquals(4, e.getCurrentFloor());
+        assertEquals(Action.DOWN, e.getNextAction());
+        assertEquals(-3, (Object) e.getDestinationFloor());
+    }
+
 }
