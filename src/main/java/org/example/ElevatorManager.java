@@ -12,14 +12,23 @@ import java.util.stream.Collectors;
 public class ElevatorManager {
 
     private final int numberOfElevators;
-    private final int numberOfPositiveFloors; // Num of floors above the ground level. Including ground level (0)
-    private final int numberOfNegativeFloors; // Num of floors below the ground level.
+    private final int numberOfPositiveFloors; // Num of floors above the ground floor.
+    private final int numberOfNegativeFloors; // Num of floors below the ground floor.
     private final Elevator[] elevators;
     private final ArrayList<Tuple<Integer, Integer>> upCache = new ArrayList<>();
     private final ArrayList<Tuple<Integer, Integer>> downCache = new ArrayList<>();
 
 
     ElevatorManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
+        if (numberOfElevators <= 0)
+            throw new IllegalArgumentException("numberOfElevators (" + numberOfElevators + ") must be > 0");
+        if (numberOfPositiveFloors < 0)
+            throw new IllegalArgumentException("numberOfPositiveFloors (" + numberOfPositiveFloors + ") must be >= 0");
+        if (numberOfNegativeFloors < 0)
+            throw new IllegalArgumentException("numberOfNegativeFloors (" + numberOfNegativeFloors + ") must be >= 0");
+        if (numberOfPositiveFloors + numberOfNegativeFloors == 0)
+            throw new IllegalArgumentException("System must have at least one non-ground floor." +
+                    " numberOfPositiveFloors and numberOfNegativeFloors cannot be equal to 0 simultaneously");
         this.numberOfElevators = numberOfElevators;
         this.numberOfPositiveFloors = numberOfPositiveFloors;
         this.numberOfNegativeFloors = numberOfNegativeFloors;
@@ -31,8 +40,24 @@ public class ElevatorManager {
         return Arrays.stream(elevators).map(Elevator::getStatus).collect(Collectors.toList());
     }
 
+    private void validatePickUpArguments(int callingFloor, int toFloor) {
+        if (callingFloor > numberOfPositiveFloors)
+            throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is above the highest floor " +
+                    "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
+        if (callingFloor < -numberOfNegativeFloors)
+            throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is below the lowest floor " +
+                    "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
+        if (toFloor > numberOfPositiveFloors)
+            throw new IllegalArgumentException("toFloor (" + toFloor + ") is above the highest floor " +
+                    "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
+        if (toFloor < -numberOfNegativeFloors)
+            throw new IllegalArgumentException("toFloor (" + toFloor + ") is below the lowest floor " +
+                    "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
+    }
+
     public void pickUp(int callingFloor, boolean upButtonPressed, int toFloor) {
-        // Add a inquiry to the nearest Elevator, which has an appropriate state
+        validatePickUpArguments(callingFloor, toFloor);
+        // Add an inquiry to the nearest Elevator, which has an appropriate state
         Elevator nearest = Arrays.stream(elevators)
                 // don't consider elevators which are "running away" from the callingFloor
                 .filter(e -> !(e.getCurrentFloor() > callingFloor && e.getNextAction() == Action.UP))
@@ -49,7 +74,8 @@ public class ElevatorManager {
     }
 
     private void flushCache(ArrayList<Tuple<Integer, Integer>> cache) {
-        if (cache != upCache && cache != downCache) return;
+        if (cache != upCache && cache != downCache)
+            throw new IllegalArgumentException("cache must be either upCache or downCache");
         Arrays.stream(elevators)
                 .filter(e -> e.getNextAction() == Action.IDLE)
                 .findFirst()
