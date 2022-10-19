@@ -1,7 +1,7 @@
 package org.example;
 
+import org.example.states.Direction;
 import org.example.utils.Triplet;
-import org.example.utils.Tuple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +15,8 @@ public class ElevatorManager {
     private final int numberOfPositiveFloors; // Num of floors above the ground floor.
     private final int numberOfNegativeFloors; // Num of floors below the ground floor.
     private final Elevator[] elevators;
-    private final ArrayList<Tuple<Integer, Integer>> upCache = new ArrayList<>();
-    private final ArrayList<Tuple<Integer, Integer>> downCache = new ArrayList<>();
+    private final ArrayList<Triplet<Integer, Boolean, Integer>> upCache = new ArrayList<>();
+    private final ArrayList<Triplet<Integer, Boolean, Integer>> downCache = new ArrayList<>();
 
 
     ElevatorManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
@@ -60,24 +60,24 @@ public class ElevatorManager {
         // Add an inquiry to the nearest Elevator, which has an appropriate state
         Elevator nearest = Arrays.stream(elevators)
                 // don't consider elevators which are "running away" from the callingFloor
-                .filter(e -> !(e.getCurrentFloor() > callingFloor && e.getNextAction() == Action.UP))
-                .filter(e -> !(e.getCurrentFloor() < callingFloor && e.getNextAction() == Action.DOWN))
+                .filter(e -> !(e.getCurrentFloor() > callingFloor && e.getDirection() == Direction.UP))
+                .filter(e -> !(e.getCurrentFloor() < callingFloor && e.getDirection() == Direction.DOWN))
                 .min(Comparator.comparingInt(e -> Math.abs(e.getCurrentFloor() - callingFloor)))
                 .orElse(null);
         if (nearest == null) {
             //Save inquiry to the cache
-            ArrayList<Tuple<Integer, Integer>> tmp = upButtonPressed ? upCache : downCache;
-            tmp.add(new Tuple<>(callingFloor, toFloor));
+            ArrayList<Triplet<Integer, Boolean, Integer>> tmp = upButtonPressed ? upCache : downCache;
+            tmp.add(new Triplet<>(callingFloor, upButtonPressed, toFloor));
         } else {
-            nearest.pickUp(callingFloor, toFloor);
+            nearest.pickUp(callingFloor, upButtonPressed, toFloor);
         }
     }
 
-    private void flushCache(ArrayList<Tuple<Integer, Integer>> cache) {
+    private void flushCache(ArrayList<Triplet<Integer, Boolean, Integer>> cache) {
         if (cache != upCache && cache != downCache)
             throw new IllegalArgumentException("cache must be either upCache or downCache");
         Arrays.stream(elevators)
-                .filter(e -> e.getNextAction() == Action.IDLE)
+                .filter(e -> e.getDirection() == Direction.NONE)
                 .findFirst()
                 .ifPresent(e -> {
                     e.bulkPickUp(cache);
@@ -86,9 +86,9 @@ public class ElevatorManager {
     }
 
     public void step() {
+        for (Elevator e : elevators) e.step();
         if (!upCache.isEmpty()) flushCache(upCache);
         if (!downCache.isEmpty()) flushCache(downCache);
-        for (Elevator e : elevators) e.step();
     }
 
     @Override

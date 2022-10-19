@@ -36,3 +36,4 @@ Done:
   - [TODO] Błędne argumenty wywołania metod
   - [Case] pickUp: z X na X wsiadając na X -> 
   - [Case] zły user. Wzywa windę i naciska zły przycisk (na 5tym wciska górę, a w windzie 1)
+  - [Case] Winda jedzie w górę żeby odebrać kogoś i zwieść na dół. W czasie jazdy w górę przychodzi zamówienie na jazdę w górę

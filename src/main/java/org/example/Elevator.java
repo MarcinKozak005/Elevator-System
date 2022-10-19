@@ -1,7 +1,8 @@
 package org.example;
 
+import org.example.states.Action;
+import org.example.states.Direction;
 import org.example.utils.Triplet;
-import org.example.utils.Tuple;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -9,6 +10,7 @@ import java.util.TreeSet;
 public class Elevator {
     private int id;
     private int currentFloor;
+    private Direction direction;
     private Action nextAction;
     private TreeSet<Integer> queue = new TreeSet<>();
     private ArrayList<Integer> buffer = new ArrayList<>();
@@ -16,6 +18,7 @@ public class Elevator {
     Elevator(int id, int currentFloor) {
         this.id = id;
         this.currentFloor = currentFloor;
+        this.direction = Direction.NONE;
         this.nextAction = Action.IDLE;
     }
 
@@ -25,29 +28,28 @@ public class Elevator {
 
     private void calculateNextAction() {
         if (queue.isEmpty()) nextAction = Action.IDLE;
-        else if (currentFloor == queue.first()) {
-            nextAction = Action.UNLOAD;
-            queue.pollFirst();
-        } else nextAction = (queue.first() > currentFloor) ? Action.UP : Action.DOWN;
+        else if (currentFloor == queue.first()) nextAction = Action.UNLOAD;
+        else if (currentFloor < queue.first()) nextAction = Action.UP;
+        else if (currentFloor > queue.first()) nextAction = Action.DOWN;
     }
 
-    private void configureQueueOrder(int fromFloor, int toFloor) {
-        queue = (fromFloor < toFloor) ? new TreeSet<>() : new TreeSet<>((o1, o2) -> Integer.compare(o2, o1));
+    private void configureQueueOrder(boolean upButtonPressed) {
+        queue = (upButtonPressed) ? new TreeSet<>() : new TreeSet<>((o1, o2) -> Integer.compare(o2, o1));
     }
 
-    public void bulkPickUp(ArrayList<Tuple<Integer, Integer>> collection) {
-        collection.forEach(t -> pickUp(t.getFst(), t.getSnd()));
+    public void bulkPickUp(ArrayList<Triplet<Integer, Boolean, Integer>> collection) {
+        collection.forEach(t -> pickUp(t.getFst(), t.getSnd(), t.getTrd()));
+        calculateNextAction();
     }
 
-    public void pickUp(int fromFloor, int toFloor) {
+    public void pickUp(int fromFloor, boolean upButtonPressed, int toFloor) {
         if (queue.isEmpty()) {
-            // change directions UP<->DOWN
-            configureQueueOrder(fromFloor, toFloor);
+            configureQueueOrder(upButtonPressed);
+            direction = (upButtonPressed) ? Direction.UP : Direction.DOWN;
             queue.add(toFloor);
             queue.add(fromFloor);
-        } else if (fromFloor < toFloor && currentFloor > queue.first() ||
-                fromFloor > toFloor && currentFloor < queue.first()) {
-            // toFloor is in opposite direction to the elevator movement
+        } else if (fromFloor < toFloor && !upButtonPressed || fromFloor > toFloor && upButtonPressed) {
+            // user called to go UP/DOWN, but goes DOWN/UP (in opposite direction)
             queue.add(fromFloor);
             buffer.add(toFloor);
         } else {
@@ -59,11 +61,20 @@ public class Elevator {
     }
 
     public void step() {
-        if (nextAction == Action.UP) currentFloor++;
-        else if (nextAction == Action.DOWN) currentFloor--;
-        else if (nextAction == Action.UNLOAD && queue.isEmpty()) {
+        if (!queue.isEmpty()) {
+            // Standard step
+            if (currentFloor == queue.first()) queue.pollFirst();
+            else if (currentFloor < queue.first()) currentFloor++;
+            else if (currentFloor > queue.first()) currentFloor--;
+        }
+        if (queue.isEmpty() && !buffer.isEmpty()) {
+            // Take inquiries from the buffer
+            direction = (direction == Direction.UP) ? Direction.DOWN : Direction.UP;
+            configureQueueOrder(direction == Direction.UP);
             queue.addAll(buffer);
             buffer.clear();
+        } else if (queue.isEmpty()) {
+            direction = Direction.NONE;
         }
         calculateNextAction();
     }
@@ -76,12 +87,16 @@ public class Elevator {
         return currentFloor;
     }
 
-    public Action getNextAction() {
-        return nextAction;
+    public Direction getDirection() {
+        return direction;
     }
 
     public Integer getDestinationFloor() {
         return queue.isEmpty() ? null : queue.first();
+    }
+
+    public Action getNextAction() {
+        return nextAction;
     }
 
     @Override
@@ -90,7 +105,8 @@ public class Elevator {
                 "id=" + id +
                 ", currentFloor=" + currentFloor +
                 ", destinationFloor=" + getDestinationFloor() +
-                ", nexAction=" + nextAction +
+                ", direction=" + direction +
+                ", nextAction=" + nextAction +
                 ", floorsOrder=" + queue +
                 "}\n";
     }
