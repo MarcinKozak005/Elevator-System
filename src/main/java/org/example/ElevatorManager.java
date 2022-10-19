@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.elevator.Elevator;
 import org.example.states.Direction;
 import org.example.utils.Triplet;
 
