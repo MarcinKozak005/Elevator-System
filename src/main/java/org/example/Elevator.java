@@ -42,7 +42,8 @@ public class Elevator {
         calculateNextAction();
     }
 
-    public void pickUp(int fromFloor, boolean upButtonPressed, int toFloor) {
+    public void pickUp(int fromFloor, boolean upButtonPressed, Integer toFloor) {
+        if (toFloor == null) toFloor = fromFloor;
         if (queue.isEmpty()) {
             configureQueueOrder(upButtonPressed);
             direction = (upButtonPressed) ? Direction.UP : Direction.DOWN;
@@ -56,6 +57,20 @@ public class Elevator {
             // Standard case
             queue.add(toFloor);
             queue.add(fromFloor);
+        }
+        calculateNextAction();
+    }
+
+    public void pickUp(int toFloor) {
+        if (queue.isEmpty()) {
+            configureQueueOrder(currentFloor < toFloor);
+            direction = (currentFloor < toFloor) ? Direction.UP : Direction.DOWN;
+            queue.add(toFloor);
+        } else if (direction == Direction.UP && currentFloor > toFloor ||
+                direction == Direction.DOWN && currentFloor < toFloor) {
+            buffer.add(toFloor);
+        } else {
+            queue.add(toFloor);
         }
         calculateNextAction();
     }

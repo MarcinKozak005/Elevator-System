@@ -3,10 +3,7 @@ package org.example;
 import org.example.states.Direction;
 import org.example.utils.Triplet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ElevatorManager {
@@ -55,7 +52,7 @@ public class ElevatorManager {
                     "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
     }
 
-    public void pickUp(int callingFloor, boolean upButtonPressed, int toFloor) {
+    public void pickUp(int callingFloor, boolean upButtonPressed, Integer toFloor) {
         validatePickUpArguments(callingFloor, toFloor);
         // Add an inquiry to the nearest Elevator, which has an appropriate state
         Elevator nearest = Arrays.stream(elevators)
@@ -71,6 +68,12 @@ public class ElevatorManager {
         } else {
             nearest.pickUp(callingFloor, upButtonPressed, toFloor);
         }
+    }
+
+    public void pickUp(int elevatorId, int toFloor) {
+        Elevator elevator = Arrays.stream(elevators).filter(e -> e.getId() == elevatorId).findFirst().orElse(null);
+        if (elevator == null) throw new NoSuchElementException("There is no elevator with id=" + elevatorId);
+        elevator.pickUp(toFloor);
     }
 
     private void flushCache(ArrayList<Triplet<Integer, Boolean, Integer>> cache) {

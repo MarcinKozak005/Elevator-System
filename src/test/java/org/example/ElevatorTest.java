@@ -18,7 +18,7 @@ public class ElevatorTest {
     }
 
     @Test
-    public void noPickUp_step() {
+    public void noPickUpStep() {
         Elevator e = new Elevator(1, 0);
         e.step();
         assertEquals(1, e.getId());
@@ -28,18 +28,29 @@ public class ElevatorTest {
     }
 
     @Test
-    public void pickAbove_step() {
+    public void pickCurrentStep() {
         Elevator e = new Elevator(1, 0);
-        e.pickUp(2, true,3);
+        e.pickUp(0, true, 2);
+        e.step();
+        assertEquals(1, e.getId());
+        assertEquals(0, e.getCurrentFloor());
+        assertEquals(Direction.UP, e.getDirection());
+        assertEquals(Action.UP, e.getNextAction());
+    }
+
+    @Test
+    public void pickAboveStep() {
+        Elevator e = new Elevator(1, 0);
+        e.pickUp(2, true, 3);
         e.step();
         assertEquals(1, e.getId());
         assertEquals(1, e.getCurrentFloor());
         assertEquals(Direction.UP, e.getDirection());
-        assertEquals(Action.UP,e.getNextAction());
+        assertEquals(Action.UP, e.getNextAction());
     }
 
     @Test
-    public void pickBelow_step() {
+    public void pickBelowStep() {
         Elevator e = new Elevator(1, 0);
         e.pickUp(-2, false, -3);
         e.step();
@@ -68,6 +79,42 @@ public class ElevatorTest {
         assertEquals(0, e.getCurrentFloor());
         assertEquals(Direction.UP, e.getDirection());
         assertEquals(Action.UNLOAD, e.getNextAction());
+    }
+
+    @Test
+    public void noToFloorCall() {
+        Elevator e = new Elevator(1, 0);
+        e.pickUp(1, true, null);
+        e.step();
+        assertEquals(1, e.getId());
+        assertEquals(1, e.getCurrentFloor());
+        assertEquals(Direction.UP, e.getDirection());
+        assertEquals(Action.UNLOAD, e.getNextAction());
+        e.step();
+        assertEquals(1, e.getId());
+        assertEquals(1, e.getCurrentFloor());
+        assertEquals(Direction.NONE, e.getDirection());
+        assertEquals(Action.IDLE, e.getNextAction());
+    }
+
+    @Test
+    public void noFromFloorCall0() {
+        Elevator e = new Elevator(1, 0);
+        e.pickUp(0);
+        assertEquals(1, e.getId());
+        assertEquals(0, e.getCurrentFloor());
+        assertEquals(Direction.DOWN, e.getDirection());
+        assertEquals(Action.UNLOAD, e.getNextAction());
+    }
+
+    @Test
+    public void noFromFloorCall1() {
+        Elevator e = new Elevator(1, 0);
+        e.pickUp(1);
+        assertEquals(1, e.getId());
+        assertEquals(0, e.getCurrentFloor());
+        assertEquals(Direction.UP, e.getDirection());
+        assertEquals(Action.UP, e.getNextAction());
     }
 
     @Test
