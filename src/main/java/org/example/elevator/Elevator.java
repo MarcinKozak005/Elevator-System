@@ -33,15 +33,15 @@ public abstract class Elevator {
         calculateNextAction();
     }
 
-    abstract boolean hasNoMoreInquires();
+    protected abstract boolean hasNoMoreInquires();
 
-    abstract void doIfNoMoreInquires(int fromFloor, boolean upButtonPressed, Integer toFloor);
+    protected abstract void doIfNoMoreInquires(int fromFloor, boolean upButtonPressed, Integer toFloor);
 
-    abstract void doIfBadDirectionUserInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor);
+    protected abstract void doIfBadDirectionUserInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor);
 
-    abstract void standardInquiryHandling(int fromFloor, boolean upButtonPressed, Integer toFloor);
+    protected abstract void standardInquiryHandling(int fromFloor, boolean upButtonPressed, Integer toFloor);
 
-    abstract void noToFloorInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor);
+    protected abstract void noToFloorInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor);
 
     boolean isIncorrectUserInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor) {
         // user called to go UP/DOWN, but goes DOWN/UP (in opposite direction)
@@ -59,13 +59,13 @@ public abstract class Elevator {
         calculateNextAction();
     }
 
-    abstract void doIfNoMoreInquiresNoFromFloor(int toFloor);
+    protected abstract void doIfNoMoreInquiresNoFromFloor(int toFloor);
 
-    abstract boolean isIncorrectUserInquiryNoFromFloor(int toFloor);
+    protected abstract boolean isIncorrectUserInquiryNoFromFloor(int toFloor);
 
-    abstract void doIfBadDirectionUserInquiryNoFromFloor(int toFloor);
+    protected abstract void doIfBadDirectionUserInquiryNoFromFloor(int toFloor);
 
-    abstract void standardInquiryHandlingNoFromFloor(int toFloor);
+    protected abstract void standardInquiryHandlingNoFromFloor(int toFloor);
 
     public void pickUp(int toFloor) {
         if (hasNoMoreInquires())
@@ -77,7 +77,7 @@ public abstract class Elevator {
         calculateNextAction();
     }
 
-    abstract void specificStep();
+    protected abstract void specificStep();
 
     public void step() {
         specificStep();

@@ -1,73 +1,74 @@
-package org.example.elevator;
+package org.example.nearestindirection;
 
+import org.example.elevator.Elevator;
 import org.example.states.Direction;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
 
-public class DirectionInOrderElevator extends Elevator {
+public class NearestInDirectionElevator extends Elevator {
     private Direction direction = Direction.NONE;
     private ArrayList<Integer> buffer = new ArrayList<>();
     private TreeSet<Integer> queue = new TreeSet<>();
 
-    public DirectionInOrderElevator(int id, int currentFloor) {
+    public NearestInDirectionElevator(int id, int currentFloor) {
         super(id, currentFloor);
     }
 
     @Override
-    boolean hasNoMoreInquires() {
+    public boolean hasNoMoreInquires() {
         return queue.isEmpty();
     }
 
-    void doIfNoMoreInquires(int fromFloor, boolean upButtonPressed, Integer toFloor) {
+    public void doIfNoMoreInquires(int fromFloor, boolean upButtonPressed, Integer toFloor) {
         configureQueueOrder(upButtonPressed);
         direction = (upButtonPressed) ? Direction.UP : Direction.DOWN;
         queue.add(toFloor);
         queue.add(fromFloor);
     }
 
-    void doIfBadDirectionUserInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor) {
+    public void doIfBadDirectionUserInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor) {
         queue.add(fromFloor);
         buffer.add(toFloor);
     }
 
-    void standardInquiryHandling(int fromFloor, boolean upButtonPressed, Integer toFloor) {
+    public void standardInquiryHandling(int fromFloor, boolean upButtonPressed, Integer toFloor) {
         queue.add(toFloor);
         queue.add(fromFloor);
     }
 
     @Override
-    void noToFloorInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor) {
+    public void noToFloorInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor) {
         toFloor = fromFloor;
         if (hasNoMoreInquires()) doIfNoMoreInquires(fromFloor, upButtonPressed, toFloor);
         else standardInquiryHandling(fromFloor, upButtonPressed, toFloor);
     }
 
     @Override
-    void doIfNoMoreInquiresNoFromFloor(int toFloor) {
+    public void doIfNoMoreInquiresNoFromFloor(int toFloor) {
         configureQueueOrder(currentFloor < toFloor);
         direction = (currentFloor < toFloor) ? Direction.UP : Direction.DOWN;
         queue.add(toFloor);
     }
 
     @Override
-    boolean isIncorrectUserInquiryNoFromFloor(int toFloor) {
+    public boolean isIncorrectUserInquiryNoFromFloor(int toFloor) {
         return direction == Direction.UP && currentFloor > toFloor ||
                 direction == Direction.DOWN && currentFloor < toFloor;
     }
 
     @Override
-    void doIfBadDirectionUserInquiryNoFromFloor(int toFloor) {
+    public void doIfBadDirectionUserInquiryNoFromFloor(int toFloor) {
         buffer.add(toFloor);
     }
 
     @Override
-    void standardInquiryHandlingNoFromFloor(int toFloor) {
+    public void standardInquiryHandlingNoFromFloor(int toFloor) {
         queue.add(toFloor);
     }
 
     @Override
-    void specificStep() {
+    public void specificStep() {
         if (!queue.isEmpty()) {
             // Standard step
             if (currentFloor == queue.first()) queue.pollFirst();
@@ -83,6 +84,10 @@ public class DirectionInOrderElevator extends Elevator {
         } else if (queue.isEmpty()) {
             direction = Direction.NONE;
         }
+    }
+
+    public Direction getDirection() {
+        return direction;
     }
 
     @Override
