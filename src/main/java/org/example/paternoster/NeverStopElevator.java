@@ -41,4 +41,11 @@ public class NeverStopElevator extends Elevator {
         else if (direction == Direction.DOWN) return currentFloor - 1;
         else return null;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", direction=" + direction +
+                "}\n";
+    }
 }

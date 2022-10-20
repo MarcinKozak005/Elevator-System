@@ -87,4 +87,16 @@ public abstract class GroupManager<T extends Elevator> {
         afterStep();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder elevatorsString = new StringBuilder();
+        elevators.forEach(e -> elevatorsString.append(e.toString()));
+        return this.getClass().getSimpleName() + "{\n" +
+                "numberOfElevators=" + numberOfElevators +
+                "\nnumberOfPositiveFloors=" + numberOfPositiveFloors +
+                "\nnumberOfNegativeFloors=" + numberOfNegativeFloors +
+                "\nelevators=\n" + elevatorsString +
+                '}';
+    }
+
 }
