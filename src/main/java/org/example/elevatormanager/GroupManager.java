@@ -4,7 +4,7 @@ import org.example.elevator.Elevator;
 
 import java.util.ArrayList;
 
-public abstract class ElevatorManager<T extends Elevator> {
+public abstract class GroupManager<T extends Elevator> {
     protected ArrayList<T> elevators;
 
     public ArrayList<T> getElevators() {

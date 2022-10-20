@@ -12,10 +12,10 @@ public class ElevatorsGroup<T extends Elevator> {
     private final int numberOfElevators;
     private final int numberOfPositiveFloors; // Num of floors above the ground floor.
     private final int numberOfNegativeFloors; // Num of floors below the ground floor.
-    ElevatorManager<T> elevatorManager;
+    GroupManager<T> groupManager;
 
-    public ElevatorsGroup(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors, ElevatorManager<T> elevatorManager) {
-        if (elevatorManager == null)
+    public ElevatorsGroup(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors, GroupManager<T> groupManager) {
+        if (groupManager == null)
             throw new IllegalArgumentException("managerSchedulingStrategy cannot be null");
         if (numberOfElevators <= 0)
             throw new IllegalArgumentException("numberOfElevators (" + numberOfElevators + ") must be > 0");
@@ -29,12 +29,12 @@ public class ElevatorsGroup<T extends Elevator> {
         this.numberOfElevators = numberOfElevators;
         this.numberOfPositiveFloors = numberOfPositiveFloors;
         this.numberOfNegativeFloors = numberOfNegativeFloors;
-        this.elevatorManager = elevatorManager;
-        elevatorManager.populateElevatorsArray(numberOfElevators);
+        this.groupManager = groupManager;
+        groupManager.populateElevatorsArray(numberOfElevators);
     }
 
     public List<Triplet<Integer, Integer, Integer>> status() {
-        return elevatorManager.getElevators().stream().map(Elevator::getStatus).collect(Collectors.toList());
+        return groupManager.getElevators().stream().map(Elevator::getStatus).collect(Collectors.toList());
     }
 
     private void validatePickUpArguments(int callingFloor, int toFloor) {
@@ -55,34 +55,35 @@ public class ElevatorsGroup<T extends Elevator> {
     public void pickUp(int callingFloor, boolean upButtonPressed, Integer toFloor) {
         validatePickUpArguments(callingFloor, toFloor);
         // Add an inquiry to the nearest Elevator, which has an appropriate state
-        Elevator selectedElevator = elevatorManager.getSelectedElevator(callingFloor, upButtonPressed, toFloor);
+        Elevator selectedElevator = groupManager.getSelectedElevator(callingFloor, upButtonPressed, toFloor);
         if (selectedElevator == null)
-            elevatorManager.doIfElevatorIsNull(callingFloor, upButtonPressed, toFloor);
+            groupManager.doIfElevatorIsNull(callingFloor, upButtonPressed, toFloor);
         else selectedElevator.pickUp(callingFloor, upButtonPressed, toFloor);
 
     }
 
     public void pickUp(int elevatorId, int toFloor) {
-        Elevator elevator = elevatorManager.getElevators().stream().filter(e -> e.getId() == elevatorId).findFirst().orElse(null);
+        Elevator elevator = groupManager.getElevators().stream().filter(e -> e.getId() == elevatorId).findFirst().orElse(null);
         if (elevator == null) throw new NoSuchElementException("There is no elevator with id=" + elevatorId);
         elevator.pickUp(toFloor);
     }
 
 
     public void step() {
-        elevatorManager.beforeStep();
-        for (Elevator e : elevatorManager.getElevators()) e.step();
-        elevatorManager.afterStep();
+        groupManager.beforeStep();
+        for (Elevator e : groupManager.getElevators()) e.step();
+        groupManager.afterStep();
     }
 
     @Override
     public String toString() {
         StringBuilder elevatorsString = new StringBuilder();
-        elevatorManager.getElevators().forEach(e -> elevatorsString.append(e.toString()));
-        return "ElevatorManager{\n" +
+        groupManager.getElevators().forEach(e -> elevatorsString.append(e.toString()));
+        return this.getClass().getSimpleName()+"{\n" +
                 "numberOfElevators=" + numberOfElevators +
                 "\nnumberOfPositiveFloors=" + numberOfPositiveFloors +
                 "\nnumberOfNegativeFloors=" + numberOfNegativeFloors +
+                "\ngroupManager=" + groupManager +
                 "\nelevators=\n" + elevatorsString +
                 '}';
     }

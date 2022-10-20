@@ -1,13 +1,13 @@
 package org.example.nearestindirection;
 
-import org.example.elevatormanager.ElevatorManager;
+import org.example.elevatormanager.GroupManager;
 import org.example.states.Direction;
 import org.example.utils.Triplet;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class NearestInDirectionManager extends ElevatorManager<NearestInDirectionElevator> {
+public class NearestInDirectionManager extends GroupManager<NearestInDirectionElevator> {
     private final ArrayList<Triplet<Integer, Boolean, Integer>> upCache = new ArrayList<>();
     private final ArrayList<Triplet<Integer, Boolean, Integer>> downCache = new ArrayList<>();
 
@@ -55,5 +55,10 @@ public class NearestInDirectionManager extends ElevatorManager<NearestInDirectio
                     e.bulkPickUp(cache);
                     cache.clear();
                 });
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
     }
 }

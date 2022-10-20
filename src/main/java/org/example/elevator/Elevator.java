@@ -100,7 +100,7 @@ public abstract class Elevator {
 
     @Override
     public String toString() {
-        return "Elevator{" +
+        return this.getClass().getSimpleName()+"{" +
                 "id=" + id +
                 ", currentFloor=" + currentFloor +
                 ", destinationFloor=" + getDestinationFloor() +
