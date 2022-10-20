@@ -1,4 +1,4 @@
-package org.example.elevator;
+package org.example;
 
 import org.example.states.Action;
 import org.example.utils.Triplet;
@@ -20,7 +20,7 @@ public abstract class Elevator {
         return new Triplet<>(id, currentFloor, getDestinationFloor());
     }
 
-    private void calculateNextAction() {
+    protected void calculateNextAction() {
         Integer destinationFloor = getDestinationFloor();
         if (destinationFloor == null) nextAction = Action.IDLE;
         else if (currentFloor == destinationFloor) nextAction = Action.UNLOAD;

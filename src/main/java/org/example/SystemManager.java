@@ -1,18 +1,16 @@
-package org.example.elevatormanager;
-
-import org.example.elevator.Elevator;
+package org.example;
 
 import java.util.List;
 
 public class SystemManager {
 
-    List<ElevatorsGroup<? extends Elevator>> groups;
+    List<GroupManager<? extends Elevator>> groups;
 
-    public SystemManager(ElevatorsGroup<? extends Elevator> eg){
+    public SystemManager(GroupManager<? extends Elevator> eg){
         this.groups = List.of(eg);
 
     }
-    public SystemManager(List<ElevatorsGroup<? extends Elevator>> groups) {
+    public SystemManager(List<GroupManager<? extends Elevator>> groups) {
         this.groups = groups;
     }
 
@@ -32,12 +30,12 @@ public class SystemManager {
         groups.get(groupNumber).pickUp(elevatorId,toFloor);
     }
 
-    public void addGroup(ElevatorsGroup<? extends Elevator> group){
+    public void addGroup(GroupManager<? extends Elevator> group){
         groups.add(group);
     }
 
     public void step(){
-        groups.forEach(ElevatorsGroup::step);
+        groups.forEach(GroupManager::step);
     }
 
     @Override

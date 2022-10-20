@@ -1,6 +1,6 @@
 package org.example.nearestindirection;
 
-import org.example.elevatormanager.GroupManager;
+import org.example.GroupManager;
 import org.example.states.Direction;
 import org.example.utils.Triplet;
 
@@ -10,6 +10,10 @@ import java.util.Comparator;
 public class NearestInDirectionManager extends GroupManager<NearestInDirectionElevator> {
     private final ArrayList<Triplet<Integer, Boolean, Integer>> upCache = new ArrayList<>();
     private final ArrayList<Triplet<Integer, Boolean, Integer>> downCache = new ArrayList<>();
+
+    public NearestInDirectionManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
+        super(numberOfElevators, numberOfPositiveFloors, numberOfNegativeFloors);
+    }
 
 
     @Override
@@ -59,6 +63,15 @@ public class NearestInDirectionManager extends GroupManager<NearestInDirectionEl
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName();
+        StringBuilder elevatorsString = new StringBuilder();
+        elevators.forEach(e -> elevatorsString.append(e.toString()));
+        return this.getClass().getSimpleName() + "{\n" +
+                "numberOfElevators=" + numberOfElevators +
+                "\nnumberOfPositiveFloors=" + numberOfPositiveFloors +
+                "\nnumberOfNegativeFloors=" + numberOfNegativeFloors +
+                "\nupCache=" + upCache +
+                "\ndownCache=" + downCache +
+                "\nelevators=\n" + elevatorsString +
+                '}';
     }
 }

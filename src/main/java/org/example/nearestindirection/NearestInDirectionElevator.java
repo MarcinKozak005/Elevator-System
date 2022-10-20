@@ -1,6 +1,6 @@
 package org.example.nearestindirection;
 
-import org.example.elevator.Elevator;
+import org.example.Elevator;
 import org.example.states.Direction;
 
 import java.util.ArrayList;

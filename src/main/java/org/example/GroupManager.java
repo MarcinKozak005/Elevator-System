@@ -1,22 +1,35 @@
-package org.example.elevatormanager;
+package org.example;
 
-import org.example.elevator.Elevator;
 import org.example.utils.Triplet;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-public class ElevatorsGroup<T extends Elevator> {
+public abstract class GroupManager<T extends Elevator> {
 
-    private final int numberOfElevators;
-    private final int numberOfPositiveFloors; // Num of floors above the ground floor.
-    private final int numberOfNegativeFloors; // Num of floors below the ground floor.
-    GroupManager<T> groupManager;
+    protected final int numberOfElevators;
+    protected final int numberOfPositiveFloors; // Num of floors above the ground floor.
+    protected final int numberOfNegativeFloors; // Num of floors below the ground floor.
+    protected ArrayList<T> elevators;
 
-    public ElevatorsGroup(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors, GroupManager<T> groupManager) {
-        if (groupManager == null)
-            throw new IllegalArgumentException("managerSchedulingStrategy cannot be null");
+
+    public ArrayList<T> getElevators() {
+        return elevators;
+    }
+
+    protected abstract void populateElevatorsArray(int numberOfElevators);
+
+    protected abstract T getSelectedElevator(int callingFloor, boolean upButtonPressed, Integer toFloor);
+
+    protected abstract void doIfElevatorIsNull(int callingFloor, boolean upButtonPressed, Integer toFloor);
+
+    protected abstract void beforeStep();
+
+    protected abstract void afterStep();
+
+    public GroupManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
         if (numberOfElevators <= 0)
             throw new IllegalArgumentException("numberOfElevators (" + numberOfElevators + ") must be > 0");
         if (numberOfPositiveFloors < 0)
@@ -29,12 +42,11 @@ public class ElevatorsGroup<T extends Elevator> {
         this.numberOfElevators = numberOfElevators;
         this.numberOfPositiveFloors = numberOfPositiveFloors;
         this.numberOfNegativeFloors = numberOfNegativeFloors;
-        this.groupManager = groupManager;
-        groupManager.populateElevatorsArray(numberOfElevators);
+        populateElevatorsArray(numberOfElevators);
     }
 
     public List<Triplet<Integer, Integer, Integer>> status() {
-        return groupManager.getElevators().stream().map(Elevator::getStatus).collect(Collectors.toList());
+        return elevators.stream().map(Elevator::getStatus).collect(Collectors.toList());
     }
 
     private void validatePickUpArguments(int callingFloor, int toFloor) {
@@ -55,36 +67,24 @@ public class ElevatorsGroup<T extends Elevator> {
     public void pickUp(int callingFloor, boolean upButtonPressed, Integer toFloor) {
         validatePickUpArguments(callingFloor, toFloor);
         // Add an inquiry to the nearest Elevator, which has an appropriate state
-        Elevator selectedElevator = groupManager.getSelectedElevator(callingFloor, upButtonPressed, toFloor);
+        Elevator selectedElevator = getSelectedElevator(callingFloor, upButtonPressed, toFloor);
         if (selectedElevator == null)
-            groupManager.doIfElevatorIsNull(callingFloor, upButtonPressed, toFloor);
+            doIfElevatorIsNull(callingFloor, upButtonPressed, toFloor);
         else selectedElevator.pickUp(callingFloor, upButtonPressed, toFloor);
 
     }
 
     public void pickUp(int elevatorId, int toFloor) {
-        Elevator elevator = groupManager.getElevators().stream().filter(e -> e.getId() == elevatorId).findFirst().orElse(null);
+        Elevator elevator = elevators.stream().filter(e -> e.getId() == elevatorId).findFirst().orElse(null);
         if (elevator == null) throw new NoSuchElementException("There is no elevator with id=" + elevatorId);
         elevator.pickUp(toFloor);
     }
 
 
     public void step() {
-        groupManager.beforeStep();
-        for (Elevator e : groupManager.getElevators()) e.step();
-        groupManager.afterStep();
+        beforeStep();
+        for (Elevator e : getElevators()) e.step();
+        afterStep();
     }
 
-    @Override
-    public String toString() {
-        StringBuilder elevatorsString = new StringBuilder();
-        groupManager.getElevators().forEach(e -> elevatorsString.append(e.toString()));
-        return this.getClass().getSimpleName()+"{\n" +
-                "numberOfElevators=" + numberOfElevators +
-                "\nnumberOfPositiveFloors=" + numberOfPositiveFloors +
-                "\nnumberOfNegativeFloors=" + numberOfNegativeFloors +
-                "\ngroupManager=" + groupManager +
-                "\nelevators=\n" + elevatorsString +
-                '}';
-    }
 }
