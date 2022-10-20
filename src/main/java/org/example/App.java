@@ -1,8 +1,5 @@
 package org.example;
 
-import org.example.elevatormanager.ElevatorsGroup;
-import org.example.elevatormanager.GroupManager;
-import org.example.elevatormanager.SystemManager;
 import org.example.nearestindirection.NearestInDirectionElevator;
 import org.example.nearestindirection.NearestInDirectionManager;
 
@@ -10,8 +7,7 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
-        GroupManager<NearestInDirectionElevator> gm = new NearestInDirectionManager();
-        ElevatorsGroup<NearestInDirectionElevator> eg = new ElevatorsGroup<>(1, 15, 15, gm);
+        GroupManager<NearestInDirectionElevator> eg = new NearestInDirectionManager(1, 15, 15);
         SystemManager sm = new SystemManager(eg);
         Scanner s = new Scanner(System.in);
         String input;
