@@ -18,48 +18,13 @@ public class NeverStopElevator extends Elevator {
     }
 
     @Override
-    protected boolean hasNoMoreInquires() {
-        return false;
-    }
+    protected void elevatorSpecificPickUp(int fromFloor, boolean upButtonPressed, Integer toFloor) {}
 
     @Override
-    protected void doIfNoMoreInquires(int fromFloor, boolean upButtonPressed, Integer toFloor) {
-    }
+    protected void elevatorSpecificPickUp(int toFloor) {}
 
     @Override
-    protected void doIfBadDirectionUserInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor) {
-    }
-
-    @Override
-    protected void standardInquiryHandling(int fromFloor, boolean upButtonPressed, Integer toFloor) {
-    }
-
-    @Override
-    protected void noToFloorInquiry(int fromFloor, boolean upButtonPressed, Integer toFloor) {
-
-    }
-
-    @Override
-    protected void doIfNoMoreInquiresNoFromFloor(int toFloor) {
-    }
-
-    @Override
-    protected boolean isIncorrectUserInquiryNoFromFloor(int toFloor) {
-        return false;
-    }
-
-    @Override
-    protected void doIfBadDirectionUserInquiryNoFromFloor(int toFloor) {
-
-    }
-
-    @Override
-    protected void standardInquiryHandlingNoFromFloor(int toFloor) {
-
-    }
-
-    @Override
-    protected void specificStep() {
+    protected void elevatorSpecificStep() {
         calculateNextAction();
         if (nextAction == Action.UP) currentFloor++;
         else if (nextAction == Action.DOWN) currentFloor--;
