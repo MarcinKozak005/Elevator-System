@@ -1,5 +1,6 @@
 Logic:
 - [Feature] Różne techniki schedulowania wind
+- [Idea] generalizacja tych wszystkich ArrayList?
 - [Feature] Różne tryby pracy wind:
   - Windy w jednym miejscu, lub rozrzucone po budynku
   - Winda jeżdząca co 2 piętra

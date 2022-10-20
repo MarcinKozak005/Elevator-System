@@ -1,16 +1,17 @@
 package org.example;
 
+import org.example.nearestindirection.NearestInDirectionElevator;
 import org.example.states.Action;
 import org.example.states.Direction;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ElevatorTest {
+public class NearestInDirectionElevatorTest {
 
     @Test
     public void elevatorCreation() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         assertEquals(1, e.getId());
         assertEquals(0, e.getCurrentFloor());
         assertEquals(Direction.NONE, e.getDirection());
@@ -19,7 +20,7 @@ public class ElevatorTest {
 
     @Test
     public void noPickUpStep() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.step();
         assertEquals(1, e.getId());
         assertEquals(0, e.getCurrentFloor());
@@ -29,7 +30,7 @@ public class ElevatorTest {
 
     @Test
     public void pickCurrentStep() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(0, true, 2);
         e.step();
         assertEquals(1, e.getId());
@@ -40,7 +41,7 @@ public class ElevatorTest {
 
     @Test
     public void pickAboveStep() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(2, true, 3);
         e.step();
         assertEquals(1, e.getId());
@@ -51,7 +52,7 @@ public class ElevatorTest {
 
     @Test
     public void pickBelowStep() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(-2, false, -3);
         e.step();
         assertEquals(1, e.getId());
@@ -62,7 +63,7 @@ public class ElevatorTest {
 
     @Test
     public void arriveToUnload() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(1, true, 2);
         e.step();
         assertEquals(1, e.getId());
@@ -73,7 +74,7 @@ public class ElevatorTest {
 
     @Test
     public void callOnCurrentFloor() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(0, true, 1);
         assertEquals(1, e.getId());
         assertEquals(0, e.getCurrentFloor());
@@ -83,7 +84,7 @@ public class ElevatorTest {
 
     @Test
     public void noToFloorCall() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(1, true, null);
         e.step();
         assertEquals(1, e.getId());
@@ -99,7 +100,7 @@ public class ElevatorTest {
 
     @Test
     public void noFromFloorCall0() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(0);
         assertEquals(1, e.getId());
         assertEquals(0, e.getCurrentFloor());
@@ -109,7 +110,7 @@ public class ElevatorTest {
 
     @Test
     public void noFromFloorCall1() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(1);
         assertEquals(1, e.getId());
         assertEquals(0, e.getCurrentFloor());
@@ -119,7 +120,7 @@ public class ElevatorTest {
 
     @Test
     public void callToGoUpButUserGoesDown() {
-        Elevator e = new Elevator(1, 0);
+        NearestInDirectionElevator e = new NearestInDirectionElevator(1, 0);
         e.pickUp(1, true, 4);
         e.pickUp(2, true, -3);
         e.step(); // 1 UNLOAD
