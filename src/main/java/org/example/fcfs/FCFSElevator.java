@@ -41,4 +41,11 @@ public class FCFSElevator extends Elevator {
     public Integer getDestinationFloor() {
         return (queue.isEmpty() ? null : queue.peekFirst());
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", floorsOrder=" + queue +
+                "}\n";
+    }
 }

@@ -1,13 +1,17 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SystemManager {
 
     List<GroupManager<? extends Elevator>> groups;
 
+    public SystemManager(){};
+
     public SystemManager(GroupManager<? extends Elevator> eg){
-        this.groups = List.of(eg);
+        this.groups = new ArrayList<>();
+        groups.add(eg);
 
     }
     public SystemManager(List<GroupManager<? extends Elevator>> groups) {
@@ -31,6 +35,10 @@ public class SystemManager {
     }
 
     public void addGroup(GroupManager<? extends Elevator> group){
+        if (groups == null){
+            this.groups = new ArrayList<>();
+            groups.add(group);
+        }
         groups.add(group);
     }
 
@@ -41,7 +49,7 @@ public class SystemManager {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int i=0;i<groups.size();i++) sb.append("---Group ").append(i).append("---\n").append(groups.get(i));
+        for(int i=0;i<groups.size();i++) sb.append("\n---Group ").append(i).append("---\n").append(groups.get(i));
         return "SystemManager{\n" +
                 "groups=\n" + sb +
                 '}';
