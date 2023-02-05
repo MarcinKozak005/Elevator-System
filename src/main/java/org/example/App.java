@@ -4,37 +4,51 @@ import org.example.fcfs.FCFSManager;
 import org.example.nearestindirection.NearestInDirectionManager;
 import org.example.paternoster.NeverStopManager;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
+        Properties properties = new Properties();
+        try (FileInputStream fs = new FileInputStream("src/main/resources/strings.properties")) {
+            properties.load(fs);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        printString(properties,"header.elevatorSystem");
         Scanner s = new Scanner(System.in);
         SystemManager systemManager = new SystemManager();
-        System.out.println("=== Elevator System ===");
+        System.out.println();
         int input;
         while (true) {
-            System.out.print("An elevator group is at least one elevator working with a mutual inquiries scheduling algorithm\n" +
-                    "Enter the number of elevator groups:");
+            printString(properties,"elevatorGroup.explanation");
+            printString(properties,"enter.elevatorGroupNumber");
             try {
                 input = Integer.parseInt(s.nextLine());
                 if (input < 0) throw new IllegalArgumentException();
                 break;
             } catch (Exception e) {
-                System.out.println("Enter a number greater than 0");
+                printString(properties,"warning.enterNumberGreaterThan0");
             }
         }
 
         int type, numberOfElevators, numberOfPositiveFloors, numberOfNegativeFloors;
         for (int i = 0; i < input; i++) {
-            System.out.println("-- Group " + i + " ---");
+            printFormattedString(properties, "header.group", i);
             try {
-                System.out.println("Enter Manager type:\n0: NeverStopManager\n1: NearestInDirectionManager\n2: FCFSManager");
+                printString(properties,"enter.managerType");
+                printString(properties,"ns.manager");
+                printString(properties,"nid.manager");
+                printString(properties,"fcfs.manager");
                 type = Integer.parseInt(s.nextLine());
-                System.out.print("Enter numberOfElevators: ");
+                printString(properties,"enter.numberOfElevators");
                 numberOfElevators = Integer.parseInt(s.nextLine());
-                System.out.print("Enter numberOfPositiveFloors: ");
+                printString(properties,"enter.numberOfPositiveFloors");
                 numberOfPositiveFloors = Integer.parseInt(s.nextLine());
-                System.out.print("Enter numberOfNegativeFloors: ");
+                printString(properties, "enter.numberOfNegativeFloors");
                 numberOfNegativeFloors = Integer.parseInt(s.nextLine());
                 switch (type) {
                     case 0:
@@ -47,29 +61,28 @@ public class App {
                         systemManager.addGroup(new FCFSManager(numberOfElevators, numberOfPositiveFloors, numberOfNegativeFloors));
                         break;
                     default:
-                        throw new IllegalArgumentException("Type (" + type + ") must be between 0 and 2");
+                        throw new IllegalArgumentException(MessageFormat.format(properties.getProperty("error.inputBetween0and2"),type));
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 i--;
             }
         }
-        System.out.println("+++ End of configuration +++");
+        printString(properties,"header.endOfConfig");
         System.out.println(systemManager);
-        System.out.println("---Simulation---");
+        printString(properties,"header.simulation");
         printAvailableCommands();
         String[] command;
         while (true) {
             try {
-                System.out.println("Enter a command");
+                printString(properties,"enter.command");
                 command = s.nextLine().split(" ");
                 if (command.length == 1) {
                     if (command[0].equals("s")) systemManager.step();
-                    else if (command[0].equals("h")){
+                    else if (command[0].equals("h")) {
                         printAvailableCommands();
                         continue;
-                    }
-                    else if (command[0].equals("q")) break;
+                    } else if (command[0].equals("q")) break;
                 } else if (command.length == 3) {
                     systemManager.pickUp(Integer.parseInt(command[0]),
                             Integer.parseInt(command[1]),
@@ -79,13 +92,13 @@ public class App {
                             Integer.parseInt(command[1]),
                             Boolean.parseBoolean(command[2]),
                             acceptNullableInteger(command[3]));
-                } else throw new IllegalArgumentException("Unknown command");
+                } else throw new IllegalArgumentException(properties.getProperty("error.unknownCommand"));
                 System.out.println(systemManager);
             } catch (Exception e) {
                 System.out.println(e);
             }
         }
-        System.out.println("Quiting ...");
+        printString(properties,"quiting");
     }
 
     static Integer acceptNullableInteger(String numberToParse) {
@@ -105,5 +118,13 @@ public class App {
                 "\t Example: 1 2 10\n" +
                 "h - show available commands\n" +
                 "q - quit");
+    }
+
+    static void printString(Properties p, String propertyKey){
+        System.out.println(p.getProperty(propertyKey));
+    }
+
+    static void printFormattedString(Properties p, String propertyKey, Object o){
+        System.out.println(MessageFormat.format(p.getProperty(propertyKey), o));
     }
 }

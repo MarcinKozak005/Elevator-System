@@ -39,3 +39,4 @@ Done:
       - Windy w jednym miejscu, lub rozrzucone po budynku
   - [Idea] generalizacja tych wszystkich ArrayList?
   - [TODO] triplet na bardziej znacząca nazwę klasy
+  - [TODO] Stringi do properties file
