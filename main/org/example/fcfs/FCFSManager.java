@@ -5,6 +5,9 @@ import org.example.GroupManager;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**
+ * Manager for elevators realising the First-Come-First-Serve scheduling
+ */
 public class FCFSManager extends GroupManager<FCFSElevator> {
     public FCFSManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
         super(numberOfElevators, numberOfPositiveFloors, numberOfNegativeFloors);
@@ -13,7 +16,7 @@ public class FCFSManager extends GroupManager<FCFSElevator> {
     @Override
     protected void populateElevatorsArray(int numberOfElevators) {
         elevators = new ArrayList<>(numberOfElevators);
-        for (int i = 0; i < numberOfElevators; i++) elevators.add(new FCFSElevator(i, 0));
+        for (int id = 0; id < numberOfElevators; id++) elevators.add(new FCFSElevator(id, 0));
     }
 
     @Override
@@ -27,7 +30,6 @@ public class FCFSManager extends GroupManager<FCFSElevator> {
 
     @Override
     protected void beforeStep() {
-
     }
 
     @Override

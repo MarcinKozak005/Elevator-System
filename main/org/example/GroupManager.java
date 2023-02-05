@@ -6,27 +6,17 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-public abstract class GroupManager<T extends Elevator> {
+/**
+ * Class responsible for managing a group of elevators
+ *
+ * @param <E>
+ */
+public abstract class GroupManager<E extends Elevator> {
 
     protected final int numberOfElevators;
     protected final int numberOfPositiveFloors; // Num of floors above the ground floor.
     protected final int numberOfNegativeFloors; // Num of floors below the ground floor.
-    protected List<T> elevators;
-
-
-    public List<T> getElevators() {
-        return elevators;
-    }
-
-    protected abstract void populateElevatorsArray(int numberOfElevators);
-
-    protected abstract T getSelectedElevator(int callingFloor, boolean upButtonPressed, Integer toFloor);
-
-    protected abstract void doIfElevatorIsNull(int callingFloor, boolean upButtonPressed, Integer toFloor);
-
-    protected abstract void beforeStep();
-
-    protected abstract void afterStep();
+    protected List<E> elevators;
 
     public GroupManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
         if (numberOfElevators <= 0)
@@ -48,29 +38,6 @@ public abstract class GroupManager<T extends Elevator> {
         return elevators.stream().map(Elevator::getStatus).collect(Collectors.toList());
     }
 
-    private void validatePickUpArguments(int callingFloor, int toFloor) {
-        validateCallingFloor(callingFloor);
-        validateToFloor(toFloor);
-    }
-
-    private void validateCallingFloor(int callingFloor) {
-        if (callingFloor > numberOfPositiveFloors)
-            throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is above the highest floor " +
-                    "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
-        if (callingFloor < -numberOfNegativeFloors)
-            throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is below the lowest floor " +
-                    "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
-    }
-
-    private void validateToFloor(int toFloor){
-        if (toFloor > numberOfPositiveFloors)
-            throw new IllegalArgumentException("toFloor (" + toFloor + ") is above the highest floor " +
-                    "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
-        if (toFloor < -numberOfNegativeFloors)
-            throw new IllegalArgumentException("toFloor (" + toFloor + ") is below the lowest floor " +
-                    "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
-    }
-
     public void pickUp(int callingFloor, boolean upButtonPressed, Integer toFloor) {
         validatePickUpArguments(callingFloor, (toFloor == null) ? callingFloor : toFloor);
         // Add an inquiry to the nearest Elevator, which has an appropriate state
@@ -78,7 +45,6 @@ public abstract class GroupManager<T extends Elevator> {
         if (selectedElevator == null)
             doIfElevatorIsNull(callingFloor, upButtonPressed, toFloor);
         else selectedElevator.pickUp(callingFloor, upButtonPressed, toFloor);
-
     }
 
     public void pickUp(int elevatorId, int toFloor) {
@@ -87,7 +53,6 @@ public abstract class GroupManager<T extends Elevator> {
         if (elevator == null) throw new NoSuchElementException("There is no elevator with id=" + elevatorId);
         elevator.pickUp(toFloor);
     }
-
 
     public void step() {
         beforeStep();
@@ -105,6 +70,43 @@ public abstract class GroupManager<T extends Elevator> {
                 "\n\tnumberOfNegativeFloors=" + numberOfNegativeFloors +
                 "\n\televators=\n" + elevatorsString +
                 '}';
+    }
+
+    public List<E> getElevators() {
+        return elevators;
+    }
+
+    protected abstract void populateElevatorsArray(int numberOfElevators);
+
+    protected abstract E getSelectedElevator(int callingFloor, boolean upButtonPressed, Integer toFloor);
+
+    protected abstract void doIfElevatorIsNull(int callingFloor, boolean upButtonPressed, Integer toFloor);
+
+    protected abstract void beforeStep();
+
+    protected abstract void afterStep();
+
+    private void validatePickUpArguments(int callingFloor, int toFloor) {
+        validateCallingFloor(callingFloor);
+        validateToFloor(toFloor);
+    }
+
+    private void validateCallingFloor(int callingFloor) {
+        if (callingFloor > numberOfPositiveFloors)
+            throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is above the highest floor " +
+                    "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
+        if (callingFloor < -numberOfNegativeFloors)
+            throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is below the lowest floor " +
+                    "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
+    }
+
+    private void validateToFloor(int toFloor) {
+        if (toFloor > numberOfPositiveFloors)
+            throw new IllegalArgumentException("toFloor (" + toFloor + ") is above the highest floor " +
+                    "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
+        if (toFloor < -numberOfNegativeFloors)
+            throw new IllegalArgumentException("toFloor (" + toFloor + ") is below the lowest floor " +
+                    "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
     }
 
 }

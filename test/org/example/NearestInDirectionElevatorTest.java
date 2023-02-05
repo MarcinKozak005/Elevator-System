@@ -3,9 +3,11 @@ package org.example;
 import org.example.nearestindirection.NearestInDirectionElevator;
 import org.example.states.Action;
 import org.example.states.Direction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.OptionalInt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NearestInDirectionElevatorTest {
 
@@ -150,7 +152,7 @@ public class NearestInDirectionElevatorTest {
         e.step(); // 4 DOWN
         assertEquals(4, e.getCurrentFloor());
         assertEquals(Direction.DOWN, e.getDirection());
-        assertEquals(-3, (Object) e.getDestinationFloor());
+        assertEquals(OptionalInt.of(-3), e.getDestinationFloor());
     }
 
 }

@@ -17,12 +17,11 @@ public class App {
     static Properties properties;
     static SystemManager systemManager;
 
-
     static {
         scanner = new Scanner(System.in);
         properties = new Properties();
         systemManager = new SystemManager();
-        try (FileInputStream fs = new FileInputStream("src/main/resources/strings.properties")) {
+        try (FileInputStream fs = new FileInputStream("resources/strings.properties")) {
             properties.load(fs);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -36,6 +35,7 @@ public class App {
         printString("elevatorGroup.explanation");
         int input = parsePositiveInteger("enter.elevatorGroupNumber");
 
+        // System configuration
         for (int groupNumber = 0; groupNumber < input; groupNumber++) {
             System.out.println(formatPropertyString("header.group", groupNumber));
             try {
@@ -60,6 +60,8 @@ public class App {
             }
         }
         printString("header.endOfConfig");
+
+        // Entering commands
         System.out.println(systemManager);
         printString("header.simulation");
         printAvailableCommands();

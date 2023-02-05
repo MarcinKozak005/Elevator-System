@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Manager for elevators realising the NearestInDirection scheduling
+ * Elevators stop on the floors on which there is a pickup order in the same direction that the given elevator is going
+ */
 public class NearestInDirectionManager extends GroupManager<NearestInDirectionElevator> {
     private final List<PickUpOrder> upCache = new ArrayList<>();
     private final List<PickUpOrder> downCache = new ArrayList<>();
@@ -15,7 +19,6 @@ public class NearestInDirectionManager extends GroupManager<NearestInDirectionEl
     public NearestInDirectionManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
         super(numberOfElevators, numberOfPositiveFloors, numberOfNegativeFloors);
     }
-
 
     @Override
     public void populateElevatorsArray(int numberOfElevators) {
@@ -41,7 +44,6 @@ public class NearestInDirectionManager extends GroupManager<NearestInDirectionEl
 
     @Override
     public void beforeStep() {
-
     }
 
     @Override
@@ -52,7 +54,7 @@ public class NearestInDirectionManager extends GroupManager<NearestInDirectionEl
 
     private void flushCache(List<PickUpOrder> cache) {
         if (cache != upCache && cache != downCache)
-            throw new IllegalArgumentException("cache must be either upCache or downCache");
+            throw new IllegalArgumentException("Cache must be either upCache or downCache");
         elevators.stream()
                 .filter(e -> e.getDirection() == Direction.NONE)
                 .findFirst()

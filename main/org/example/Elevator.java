@@ -22,29 +22,15 @@ public abstract class Elevator {
         return new ElevatorStatus(id, currentFloor, getDestinationFloor());
     }
 
-    protected void calculateNextAction() {
-        OptionalInt destinationFloor = getDestinationFloor();
-        if (!destinationFloor.isPresent()) nextAction = Action.IDLE;
-        else if (currentFloor == destinationFloor.getAsInt()) nextAction = Action.UNLOAD;
-        else if (currentFloor < destinationFloor.getAsInt()) nextAction = Action.UP;
-        else /*(currentFloor > destinationFloor)*/ nextAction = Action.DOWN;
-    }
-
     public void bulkPickUp(List<PickUpOrder> collection) {
         collection.forEach(order -> pickUp(order.getCallingFloor(), order.isUpButtonPressed(), order.getToFloor()));
         calculateNextAction();
     }
 
-
     public void pickUp(int fromFloor, boolean upButtonPressed, Integer toFloor) {
         elevatorSpecificPickUp(fromFloor, upButtonPressed, toFloor);
         calculateNextAction();
     }
-
-    protected abstract void elevatorSpecificPickUp(int fromFloor, boolean upButtonPressed, Integer toFloor);
-
-    protected abstract void elevatorSpecificPickUp(int toFloor);
-
 
     public void pickUp(int toFloor) {
         elevatorSpecificPickUp(toFloor);
@@ -55,8 +41,6 @@ public abstract class Elevator {
         elevatorSpecificStep();
         calculateNextAction();
     }
-
-    protected abstract void elevatorSpecificStep();
 
     public int getId() {
         return id;
@@ -80,4 +64,19 @@ public abstract class Elevator {
                 ", destinationFloor=" + getDestinationFloor() +
                 ", nextAction=" + nextAction;
     }
+
+    protected void calculateNextAction() {
+        OptionalInt destinationFloor = getDestinationFloor();
+        if (!destinationFloor.isPresent()) nextAction = Action.IDLE;
+        else if (currentFloor == destinationFloor.getAsInt()) nextAction = Action.UNLOAD;
+        else if (currentFloor < destinationFloor.getAsInt()) nextAction = Action.UP;
+        else /*(currentFloor > destinationFloor)*/ nextAction = Action.DOWN;
+    }
+
+    protected abstract void elevatorSpecificPickUp(int fromFloor, boolean upButtonPressed, Integer toFloor);
+
+    protected abstract void elevatorSpecificPickUp(int toFloor);
+
+    protected abstract void elevatorSpecificStep();
+
 }

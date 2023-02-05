@@ -6,11 +6,28 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.OptionalInt;
 
+/**
+ * Elevator realising the First-Come-First-Serve scheduling
+ */
 public class FCFSElevator extends Elevator {
     private final Deque<Integer> queue = new ArrayDeque<>();
 
     public FCFSElevator(int id, int currentFloor) {
         super(id, currentFloor);
+    }
+
+    public int getQueueSize() {
+        return queue.size();
+    }
+
+    @Override
+    public OptionalInt getDestinationFloor() {
+        return (queue.isEmpty() ? OptionalInt.empty() : OptionalInt.of(queue.peekFirst()));
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", floorsOrder=" + queue + "}\n";
     }
 
     @Override
@@ -34,19 +51,4 @@ public class FCFSElevator extends Elevator {
         }
     }
 
-    public int getQueueSize() {
-        return queue.size();
-    }
-
-    @Override
-    public OptionalInt getDestinationFloor() {
-        return (queue.isEmpty() ? OptionalInt.empty() : OptionalInt.of(queue.peekFirst()));
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() +
-                ", floorsOrder=" + queue +
-                "}\n";
-    }
 }

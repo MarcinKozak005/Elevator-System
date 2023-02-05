@@ -3,6 +3,9 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class responsible for managing multiple GroupManager
+ */
 public class SystemManager {
 
     private List<GroupManager<? extends Elevator>> groups;

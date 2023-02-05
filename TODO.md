@@ -1,8 +1,3 @@
-Inne:
-- Kolejność metod w klasach
-- Readme
-- Dokumentacja funkcji
-
 Features
 - Różne tryby pracy wind:
     - Winda jeżdząca co 2 piętra
@@ -10,7 +5,6 @@ Features
     - buffor dla windy jak szybko może przyjąć nowe zlecenie do realizacji
 - Większa konfiguracja stanu początkowego wind
 - Input:
-  - Czytanie poleceń z terminala
   - Czytanie poleceń z pliku
   - Wyplucie outputu do pliku
 - Serwer/SpringBoot?
@@ -32,3 +26,6 @@ Done:
   - [TODO] triplet na bardziej znacząca nazwę klasy
   - [TODO] Stringi do properties file
   - naprawa input loopa
+  - Kolejność metod w klasach
+  - Readme
+  - Dokumentacja funkcji

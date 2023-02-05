@@ -5,6 +5,10 @@ import org.example.states.Direction;
 
 import java.util.ArrayList;
 
+/**
+ * Manager for elevators realising the Paternoster scheduling
+ * Elevators stop on every floor
+ */
 public class NeverStopManager extends GroupManager<NeverStopElevator> {
 
     public NeverStopManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
@@ -25,20 +29,19 @@ public class NeverStopManager extends GroupManager<NeverStopElevator> {
 
     @Override
     protected void doIfElevatorIsNull(int callingFloor, boolean upButtonPressed, Integer toFloor) {
-
     }
 
     @Override
     protected void beforeStep() {
         for (NeverStopElevator e : getElevators()) {
-            e.calculateDestination(numberOfPositiveFloors,numberOfNegativeFloors);
+            e.calculateDestination(numberOfPositiveFloors, numberOfNegativeFloors);
         }
     }
 
     @Override
     protected void afterStep() {
         for (NeverStopElevator e : getElevators()) {
-            e.calculateDestination(numberOfPositiveFloors,numberOfNegativeFloors);
+            e.calculateDestination(numberOfPositiveFloors, numberOfNegativeFloors);
         }
     }
 }
