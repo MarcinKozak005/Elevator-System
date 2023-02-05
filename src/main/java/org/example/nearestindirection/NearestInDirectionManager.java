@@ -2,14 +2,15 @@ package org.example.nearestindirection;
 
 import org.example.GroupManager;
 import org.example.states.Direction;
-import org.example.utils.Triplet;
+import org.example.utils.PickUpOrder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class NearestInDirectionManager extends GroupManager<NearestInDirectionElevator> {
-    private final ArrayList<Triplet<Integer, Boolean, Integer>> upCache = new ArrayList<>();
-    private final ArrayList<Triplet<Integer, Boolean, Integer>> downCache = new ArrayList<>();
+    private final List<PickUpOrder> upCache = new ArrayList<>();
+    private final List<PickUpOrder> downCache = new ArrayList<>();
 
     public NearestInDirectionManager(int numberOfElevators, int numberOfPositiveFloors, int numberOfNegativeFloors) {
         super(numberOfElevators, numberOfPositiveFloors, numberOfNegativeFloors);
@@ -34,8 +35,8 @@ public class NearestInDirectionManager extends GroupManager<NearestInDirectionEl
 
     @Override
     public void doIfElevatorIsNull(int callingFloor, boolean upButtonPressed, Integer toFloor) {
-        ArrayList<Triplet<Integer, Boolean, Integer>> tmp = upButtonPressed ? upCache : downCache;
-        tmp.add(new Triplet<>(callingFloor, upButtonPressed, toFloor));
+        List<PickUpOrder> tmp = upButtonPressed ? upCache : downCache;
+        tmp.add(new PickUpOrder(callingFloor, upButtonPressed, toFloor));
     }
 
     @Override
@@ -49,7 +50,7 @@ public class NearestInDirectionManager extends GroupManager<NearestInDirectionEl
         if (!downCache.isEmpty()) flushCache(downCache);
     }
 
-    private void flushCache(ArrayList<Triplet<Integer, Boolean, Integer>> cache) {
+    private void flushCache(List<PickUpOrder> cache) {
         if (cache != upCache && cache != downCache)
             throw new IllegalArgumentException("cache must be either upCache or downCache");
         elevators.stream()

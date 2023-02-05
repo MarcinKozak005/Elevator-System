@@ -4,6 +4,8 @@ import org.example.Elevator;
 import org.example.states.Action;
 import org.example.states.Direction;
 
+import java.util.OptionalInt;
+
 public class NeverStopElevator extends Elevator {
     private Direction direction;
 
@@ -36,10 +38,10 @@ public class NeverStopElevator extends Elevator {
     }
 
     @Override
-    public Integer getDestinationFloor() {
-        if (direction == Direction.UP) return currentFloor + 1;
-        else if (direction == Direction.DOWN) return currentFloor - 1;
-        else return null;
+    public OptionalInt getDestinationFloor() {
+        if (direction == Direction.UP) return OptionalInt.of(currentFloor + 1);
+        else if (direction == Direction.DOWN) return OptionalInt.of(currentFloor - 1);
+        else return OptionalInt.empty();
     }
 
     @Override

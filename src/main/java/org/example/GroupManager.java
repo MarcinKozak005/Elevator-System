@@ -1,8 +1,7 @@
 package org.example;
 
-import org.example.utils.Triplet;
+import org.example.utils.ElevatorStatus;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -12,10 +11,10 @@ public abstract class GroupManager<T extends Elevator> {
     protected final int numberOfElevators;
     protected final int numberOfPositiveFloors; // Num of floors above the ground floor.
     protected final int numberOfNegativeFloors; // Num of floors below the ground floor.
-    protected ArrayList<T> elevators;
+    protected List<T> elevators;
 
 
-    public ArrayList<T> getElevators() {
+    public List<T> getElevators() {
         return elevators;
     }
 
@@ -45,7 +44,7 @@ public abstract class GroupManager<T extends Elevator> {
         populateElevatorsArray(numberOfElevators);
     }
 
-    public List<Triplet<Integer, Integer, Integer>> status() {
+    public List<ElevatorStatus> status() {
         return elevators.stream().map(Elevator::getStatus).collect(Collectors.toList());
     }
 

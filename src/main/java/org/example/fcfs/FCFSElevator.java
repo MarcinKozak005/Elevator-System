@@ -4,9 +4,10 @@ import org.example.Elevator;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.OptionalInt;
 
 public class FCFSElevator extends Elevator {
-    private Deque<Integer> queue = new ArrayDeque<>();
+    private final Deque<Integer> queue = new ArrayDeque<>();
 
     public FCFSElevator(int id, int currentFloor) {
         super(id, currentFloor);
@@ -38,8 +39,8 @@ public class FCFSElevator extends Elevator {
     }
 
     @Override
-    public Integer getDestinationFloor() {
-        return (queue.isEmpty() ? null : queue.peekFirst());
+    public OptionalInt getDestinationFloor() {
+        return (queue.isEmpty() ? OptionalInt.empty() : OptionalInt.of(queue.peekFirst()));
     }
 
     @Override

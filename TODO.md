@@ -1,18 +1,17 @@
 Logic:
-- [Idea] generalizacja tych wszystkich ArrayList?
 - [Feature] Różne tryby pracy wind:
   - Winda jeżdząca co 2 piętra
   - Windy jeżdzące w pewnym zakresie pięter (od 0-10, od 10-20 itd)
   - buffor dla windy jak szybko może przyjąć nowe zlecenie do realizacji
 - [Idea] Śledzenie id wind żeby sie nie powtarzały?
 - Elevator
-    - [TOOD] Więcej rzeczy do ustawiania - większa konfiguracja początkowego stanu
+    - [TODO] Więcej rzeczy do ustawiania - większa konfiguracja początkowego stanu
     - [Case] pickUp: fromFloor i toFloor są równe
 
 Input:
 - [TODO] Czytanie poleceń z terminala
 - [TODO] Czytanie poleceń z pliku
-- [TOOD] Wyplucie outputu do pliku
+- [TODO] Wyplucie outputu do pliku
 
 CLI?
 - [Idea] argumenty dodawane przy uruchomieniu aplikacji?
@@ -21,6 +20,7 @@ CLI?
 Serwer/SpringBoot?
 
 Inne:
+- Kolejność metod w klasach
 - Readme
 - Dokumentacja funkcji
 
@@ -37,3 +37,5 @@ Done:
   - [Feature] Różne techniki schedulowania wind
   - [Feature] Różne tryby pracy wind:
       - Windy w jednym miejscu, lub rozrzucone po budynku
+  - [Idea] generalizacja tych wszystkich ArrayList?
+  - [TODO] triplet na bardziej znacząca nazwę klasy

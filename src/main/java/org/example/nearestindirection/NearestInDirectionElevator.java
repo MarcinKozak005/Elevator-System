@@ -4,11 +4,13 @@ import org.example.Elevator;
 import org.example.states.Direction;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalInt;
 import java.util.TreeSet;
 
 public class NearestInDirectionElevator extends Elevator {
     private Direction direction = Direction.NONE;
-    private ArrayList<Integer> buffer = new ArrayList<>();
+    private final List<Integer> buffer = new ArrayList<>();
     private TreeSet<Integer> queue = new TreeSet<>();
 
     public NearestInDirectionElevator(int id, int currentFloor) {
@@ -71,8 +73,8 @@ public class NearestInDirectionElevator extends Elevator {
     }
 
     @Override
-    public Integer getDestinationFloor() {
-        return (queue.isEmpty() ? null : queue.first());
+    public OptionalInt getDestinationFloor() {
+        return (queue.isEmpty() ? OptionalInt.empty() : OptionalInt.of(queue.first()));
     }
 
     private void configureQueueOrder(boolean upButtonPressed) {

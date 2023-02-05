@@ -1,9 +1,11 @@
 package org.example;
 
 import org.example.states.Action;
-import org.example.utils.Triplet;
+import org.example.utils.ElevatorStatus;
+import org.example.utils.PickUpOrder;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalInt;
 
 public abstract class Elevator {
     protected int id;
@@ -16,20 +18,20 @@ public abstract class Elevator {
         this.nextAction = Action.IDLE;
     }
 
-    public Triplet<Integer, Integer, Integer> getStatus() {
-        return new Triplet<>(id, currentFloor, getDestinationFloor());
+    public ElevatorStatus getStatus() {
+        return new ElevatorStatus(id, currentFloor, getDestinationFloor());
     }
 
     protected void calculateNextAction() {
-        Integer destinationFloor = getDestinationFloor();
-        if (destinationFloor == null) nextAction = Action.IDLE;
-        else if (currentFloor == destinationFloor) nextAction = Action.UNLOAD;
-        else if (currentFloor < destinationFloor) nextAction = Action.UP;
+        OptionalInt destinationFloor = getDestinationFloor();
+        if (!destinationFloor.isPresent()) nextAction = Action.IDLE;
+        else if (currentFloor == destinationFloor.getAsInt()) nextAction = Action.UNLOAD;
+        else if (currentFloor < destinationFloor.getAsInt()) nextAction = Action.UP;
         else /*(currentFloor > destinationFloor)*/ nextAction = Action.DOWN;
     }
 
-    public void bulkPickUp(ArrayList<Triplet<Integer, Boolean, Integer>> collection) {
-        collection.forEach(t -> pickUp(t.getFst(), t.getSnd(), t.getTrd()));
+    public void bulkPickUp(List<PickUpOrder> collection) {
+        collection.forEach(order -> pickUp(order.getCallingFloor(), order.isUpButtonPressed(), order.getToFloor()));
         calculateNextAction();
     }
 
@@ -64,7 +66,7 @@ public abstract class Elevator {
         return currentFloor;
     }
 
-    public abstract Integer getDestinationFloor();
+    public abstract OptionalInt getDestinationFloor();
 
     public Action getNextAction() {
         return nextAction;
