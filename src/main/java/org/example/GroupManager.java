@@ -49,12 +49,20 @@ public abstract class GroupManager<T extends Elevator> {
     }
 
     private void validatePickUpArguments(int callingFloor, int toFloor) {
+        validateCallingFloor(callingFloor);
+        validateToFloor(toFloor);
+    }
+
+    private void validateCallingFloor(int callingFloor) {
         if (callingFloor > numberOfPositiveFloors)
             throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is above the highest floor " +
                     "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
         if (callingFloor < -numberOfNegativeFloors)
             throw new IllegalArgumentException("callingFloor (" + callingFloor + ") is below the lowest floor " +
                     "(numberOfNegativeFloors=" + numberOfNegativeFloors + ")");
+    }
+
+    private void validateToFloor(int toFloor){
         if (toFloor > numberOfPositiveFloors)
             throw new IllegalArgumentException("toFloor (" + toFloor + ") is above the highest floor " +
                     "(numberOfPositiveFloors=" + numberOfPositiveFloors + ")");
@@ -64,7 +72,7 @@ public abstract class GroupManager<T extends Elevator> {
     }
 
     public void pickUp(int callingFloor, boolean upButtonPressed, Integer toFloor) {
-        validatePickUpArguments(callingFloor, toFloor);
+        validatePickUpArguments(callingFloor, (toFloor == null) ? callingFloor : toFloor);
         // Add an inquiry to the nearest Elevator, which has an appropriate state
         Elevator selectedElevator = getSelectedElevator(callingFloor, upButtonPressed, toFloor);
         if (selectedElevator == null)
@@ -74,6 +82,7 @@ public abstract class GroupManager<T extends Elevator> {
     }
 
     public void pickUp(int elevatorId, int toFloor) {
+        validateToFloor(toFloor);
         Elevator elevator = elevators.stream().filter(e -> e.getId() == elevatorId).findFirst().orElse(null);
         if (elevator == null) throw new NoSuchElementException("There is no elevator with id=" + elevatorId);
         elevator.pickUp(toFloor);
@@ -89,12 +98,12 @@ public abstract class GroupManager<T extends Elevator> {
     @Override
     public String toString() {
         StringBuilder elevatorsString = new StringBuilder();
-        elevators.forEach(e -> elevatorsString.append(e.toString()));
-        return this.getClass().getSimpleName() + "{\n" +
-                "numberOfElevators=" + numberOfElevators +
-                "\nnumberOfPositiveFloors=" + numberOfPositiveFloors +
-                "\nnumberOfNegativeFloors=" + numberOfNegativeFloors +
-                "\nelevators=\n" + elevatorsString +
+        elevators.forEach(e -> elevatorsString.append("\t\t").append(e.toString()));
+        return this.getClass().getSimpleName() + "{" +
+                "\n\tnumberOfElevators=" + numberOfElevators +
+                "\n\tnumberOfPositiveFloors=" + numberOfPositiveFloors +
+                "\n\tnumberOfNegativeFloors=" + numberOfNegativeFloors +
+                "\n\televators=\n" + elevatorsString +
                 '}';
     }
 

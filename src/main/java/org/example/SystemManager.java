@@ -5,16 +5,10 @@ import java.util.List;
 
 public class SystemManager {
 
-    List<GroupManager<? extends Elevator>> groups;
+    private List<GroupManager<? extends Elevator>> groups;
 
     public SystemManager() {
     }
-
-    private void validateGroupNumber(int groupNumber) {
-        if (groupNumber < 0 || groupNumber > groups.size())
-            throw new IllegalArgumentException("There is no group with groupNumber=" + groupNumber);
-    }
-
 
     public void pickUp(int groupNumber, int callingFloor, boolean upButtonPressed, Integer toFloor) {
         validateGroupNumber(groupNumber);
@@ -29,7 +23,6 @@ public class SystemManager {
     public void addGroup(GroupManager<? extends Elevator> group) {
         if (groups == null) {
             this.groups = new ArrayList<>();
-            groups.add(group);
         }
         groups.add(group);
     }
@@ -47,4 +40,10 @@ public class SystemManager {
                 "groups=\n" + sb +
                 '}';
     }
+
+    private void validateGroupNumber(int groupNumber) {
+        if (groupNumber < 0 || groupNumber > groups.size())
+            throw new IllegalArgumentException("There is no group with groupNumber=" + groupNumber);
+    }
+
 }
